@@ -117,13 +117,6 @@ apiRoutes.get('/', function(req, res) {
   res.json({ message: 'Welcome to the coolest API on earth!' });
 });
 
-// route to return all users (GET http://localhost:8080/api/users)
-apiRoutes.get('/users', function(req, res) {
-  User.find({}, function(err, users) {
-    res.json(users);
-  });
-});   
-
 // apply the routes to our application with the prefix /api
 app.use('/api', apiRoutes);
 app.use('/api', require('./routes/api'));
