@@ -6,7 +6,8 @@ var mongoose = restful.mongoose;
 var userSchema = new mongoose.Schema({
     name: String,
     password: String,
-    admin: Boolean
+    admin: Boolean,
+    cash: Number
 });
 
 // Return model

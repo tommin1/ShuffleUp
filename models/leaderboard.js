@@ -5,7 +5,8 @@ var mongoose = restful.mongoose;
 // Schema
 var leaderboardSchema = new mongoose.Schema({
     name: String,
-    cash: Number
+    cash: Number,
+    userId: String
 });
 
 // Return model

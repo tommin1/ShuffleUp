@@ -6,6 +6,7 @@ var app         = express();
 var bodyParser  = require('body-parser');
 var morgan      = require('morgan');
 var mongoose    = require('mongoose');
+var cors = require('cors');
 
 var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config'); // get our config file
@@ -18,6 +19,8 @@ var port = process.env.PORT || 3000; // used to create, sign, and verify tokens
 mongoose.connect(config.database); // connect to database
 app.set('superSecret', config.secret); // secret variable
 
+app.use(express.static('public'));
+app.use(cors());
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -41,6 +44,8 @@ var apiRoutes = express.Router();
 // route to authenticate a user (POST http://localhost:8080/api/authenticate)
 apiRoutes.post('/authenticate', function(req, res) {
 
+	res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   // find the user
   User.findOne({
     name: req.body.name
@@ -71,7 +76,10 @@ apiRoutes.post('/authenticate', function(req, res) {
         res.json({
           success: true,
           message: 'Enjoy your token!',
-          token: token
+          token: token,
+          id: user._id,
+          name: user.name,
+          admin: user.admin
         });
       }   
 
@@ -82,7 +90,16 @@ apiRoutes.post('/authenticate', function(req, res) {
 
 // route middleware to verify a token
 apiRoutes.use(function(req, res, next) {
+	console.log("--------------");
+	console.log(req.method);
+	console.log(req.path);
+	console.log("--------------");
 
+	if (req.method=="POST" && req.path=="/users")
+		next();
+	else if (req.method=="POST" && req.path=="/leaderboard")
+		next();
+else{
   // check header or url parameters or post parameters for token
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
@@ -109,7 +126,7 @@ apiRoutes.use(function(req, res, next) {
         message: 'No token provided.' 
     });
 
-  }
+  }}
 });
 
 // route to show a random message (GET http://localhost:8080/api/)
